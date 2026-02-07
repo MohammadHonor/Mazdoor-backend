@@ -5,7 +5,7 @@ from app.api.routes import router as all_routers
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await init_db()
+    # await init_db()
     print("🚀 App is starting...")
     yield
     print("🛑 App is shutting down...")
