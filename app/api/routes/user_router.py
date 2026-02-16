@@ -8,7 +8,7 @@ from fastapi import Header,Cookie
 from fastapi import Response,Request
 from app.repositories.user import UserRepository
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.database import get_session
+# from app.db.database import get_session
 from app.schemas.user import UserCreate
 
 router = APIRouter(prefix=USER_BASE,tags=["User"])
@@ -42,11 +42,11 @@ async def auth(authorize:str=Header(default=None)):
 async def read(session_id:str=Cookie(default=None)):
     return session_id
 
-@router.post("/register")
-async def add_user(user_data:UserCreate,session: AsyncSession = Depends(get_session))->dict:
-    repository = UserRepository(session)
-    new_user = await repository.create(user_data)
-    return {"message":"create successfull","data":str(new_user)}
+# @router.post("/register")
+# async def add_user(user_data:UserCreate,session: AsyncSession = Depends(get_session))->dict:
+#     repository = UserRepository(session)
+#     new_user = await repository.create(user_data)
+#     return {"message":"create successfull","data":str(new_user)}
 
 @router.patch("/update")
 async def update_user()->dict:
