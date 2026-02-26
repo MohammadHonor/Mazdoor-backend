@@ -17,4 +17,30 @@ async def add_animals(data:AnimalSchema,session:AsyncSession=Depends(get_session
         return info
     except Exception as e :
         raise HTTPException(400,detail=str(e))
+    
+@router.get("/animal_list")
+async def show_animal_list(session:AsyncSession = Depends(get_session))->dict:
+    try:
+        repo = AnimalRepo(session=session)
+        await repo.display()
+        return {"result":"success"}
+    except Exception as e :
+        raise HTTPException(400,str(e))
+
+# @router.get("/animal/{id}")
+# async def show_animal_list(id:int,session:AsyncSession = Depends(get_session))->dict:
+#     try:
+#         repo = AnimalRepo(session=session)
+#         result = await repo.display_by_id(id=id)
+#         return {"result":result}
+#     except Exception as e :
+#         HTTPException(400,str(e))
+
+@router.get("/animal/{name}")
+async def show_animal_list(name:str,session:AsyncSession = Depends(get_session)):
+    try:
+        repo = AnimalRepo(session=session)
+        return await repo.display_by_name(name=name)  
+    except Exception as e :
+        raise HTTPException(400,str(e))
 
