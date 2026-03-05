@@ -11,6 +11,7 @@ engine = create_async_engine(
     max_overflow=20,
 )
 
+
 async_session_maker = async_sessionmaker(
     bind=engine,
     class_=AsyncSession,
@@ -27,7 +28,7 @@ async def init_db():
             await conn.run_sync(SQLModel.metadata.create_all)
         print("✅ Database connected successfully.")
     except Exception as e:
-        # print(f"❌ DB connection failed: {e}")
+        print(f"❌ DB connection failed: {e}")
         print(f"❌ DB connection failed: {type(e).__name__} → {e}")
 
 

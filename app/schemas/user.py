@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import EmailStr,BaseModel,field_validator,model_validator
+from pydantic import EmailStr,BaseModel,field_validator,model_validator, computed_field
 
 
 class UserCreate(BaseModel):
@@ -14,7 +14,7 @@ class UserCreate(BaseModel):
 
         if len(value) <= 3 :
             raise ValueError("username must contains more than 3 character")
-        elif len(value >= 20) :
+        elif len(value )>= 20 :
             raise ValueError("username must contains less than 20 character")
         return value
     
@@ -34,6 +34,8 @@ class UserCreate(BaseModel):
             raise ValueError("Password must include at least one special character")
         
         return value
+    # @model_validator
+
     
 
 # class ReadUser(BaseModel):

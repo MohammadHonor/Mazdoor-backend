@@ -22,3 +22,6 @@ class UserRepository:
         await self.session.commit()
         await self.session.refresh(new_user)
         return new_user
+    
+    def display(self):
+        print("display function")

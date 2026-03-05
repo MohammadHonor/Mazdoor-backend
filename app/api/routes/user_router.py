@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends
 from app.utils.user_data import users
-from typing import List
+from typing import List,Annotated
 from app.core import USER_BASE
 from typing import Optional
 from fastapi import Query
@@ -28,8 +28,14 @@ router = APIRouter(prefix=USER_BASE,tags=["User"])
     ```
     """,
     tags=["User"])
-async def get_user(limit: Optional[int] = Query(default=None, ge=0),
-    skip: Optional[int] = Query(default=None, ge=0)):
+# async def get_user(limit: Optional[int] = Query(default=None, ge=0),
+#     skip: Optional[int] = Query(default=None, ge=0)):
+#     if limit and skip :
+#         print(limit,skip)
+#     return Response(content="get user",status_code=200)
+
+async def get_user(limit: Annotated[int,Query()]=None,
+    skip: Annotated[int,Query(ge=0)]=None):
     if limit and skip :
         print(limit,skip)
     return Response(content="get user",status_code=200)
@@ -44,7 +50,9 @@ async def read(session_id:str=Cookie(default=None)):
 
 @router.post("/register")
 async def add_user(user_data:UserCreate,session: AsyncSession = Depends(get_session))->dict:
-    repository = UserRepository(session)
+    
+    repo = UserRepository(session)
+    repo.display()
     new_user = await repository.create(user_data)
     return {"message":"create successfull","data":str(new_user)}
 
