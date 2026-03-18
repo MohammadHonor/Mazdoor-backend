@@ -3,6 +3,7 @@ from pydantic import EmailStr,BaseModel,field_validator,model_validator, compute
 
 
 class UserCreate(BaseModel):
+    id :int
     username: str
     email: EmailStr
     phone_number: str
