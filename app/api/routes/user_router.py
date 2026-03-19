@@ -49,11 +49,10 @@ async def read(session_id:str=Cookie(default=None)):
     return session_id
 
 @router.post("/register")
-async def add_user(user_data:UserCreate,session: AsyncSession = Depends(get_session))->dict:
+async def add_user(user_data:UserCreate,session: Annotated[AsyncSession , Depends(get_session)])->dict:
     
     repo = UserRepository(session)
-    repo.display()
-    new_user = await repository.create(user_data)
+    new_user = await repo.create(user_data=user_data)
     return {"message":"create successfull","data":str(new_user)}
 
 @router.patch("/update")
