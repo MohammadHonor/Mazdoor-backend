@@ -10,6 +10,9 @@ from app.repositories.user import UserRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_session
 from app.schemas.user import UserCreate
+from app.services.user_services import add_user
+from fastapi import BackgroundTasks
+from app.task.email_tasks import send_welcome_email
 
 router = APIRouter(prefix=USER_BASE,tags=["User"])
 
@@ -49,11 +52,9 @@ async def read(session_id:str=Cookie(default=None)):
     return session_id
 
 @router.post("/register")
-async def add_user(user_data:UserCreate,session: Annotated[AsyncSession , Depends(get_session)])->dict:
-    
-    repo = UserRepository(session)
-    new_user = await repo.create(user_data=user_data)
-    return {"message":"create successfull","data":str(new_user)}
+async def register_user(user_data:UserCreate, session : Annotated[AsyncSession, Depends(get_session)], background_tasks:BackgroundTasks) :
+    background_tasks.add_task(send_welcome_email,user_data.email)
+    return await add_user(user_data,session)
 
 @router.patch("/update")
 async def update_user()->dict:
