@@ -21,7 +21,7 @@ class User(SQLModel,table=True):
     email: EmailStr
     phone_number: str
     role:UserRole = UserRole.USER
-    profession:Profession
+    profession:Profession = Profession.LABOUR
     password:str
     is_active: Optional[bool]
     is_verified: Optional[bool]

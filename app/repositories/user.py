@@ -7,16 +7,12 @@ class UserRepository:
 
     async def create(self,user_data:UserCreate)->User:
         new_user = User(
-            id=user_data.id,
-            first_name= user_data.first_name,
-            last_name=user_data.last_name,
             username=user_data.username,
             email=user_data.email,
-            phone=user_data.phone,
-            is_active= user_data.is_active,
-            is_verified= user_data.is_verified,
-            created_at = user_data.created_at,
-            updated_at= user_data.updated_at
+            phone_number=user_data.phone_number,
+            password=user_data.password,
+            is_active= True,
+            is_verified= True
         )
         self.session.add(new_user)
         await self.session.commit()
