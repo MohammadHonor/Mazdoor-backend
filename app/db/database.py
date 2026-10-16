@@ -1,32 +1,38 @@
 # app/db.py
 from sqlmodel import SQLModel
 from app.core.constents import DATABASE_URL,DEBUG
-from sqlalchemy.ext.asyncio import AsyncSession,create_async_engine, async_sessionmaker
 from typing import AsyncGenerator
+from sqlalchemy.ext.asyncio import create_async_engine,async_sessionmaker, AsyncSession 
+from sqlalchemy.orm import DeclarativeBase 
+
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=DEBUG
+    echo=DEBUG,
+    pool_size=5,
+    max_overflow=10,
+    pool_pre_ping = True,
 )
 
-
-async_session_maker = async_sessionmaker(
+SessionLocal = async_sessionmaker(
     bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
+    expire_on_commit=False,
+    # autoflush=False
 )
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
+    async with SessionLocal() as session:
         yield session
+class Base(DeclarativeBase):
+    pass
 
 async def init_db():
     try:
         async with engine.begin() as conn:
-            await conn.run_sync(SQLModel.metadata.create_all)
-        print("✅ Database connected successfully.")
+            await conn.run_sync(Base.metadata.create_all)
+        print("✅ Database initialized successfully.")
     except Exception as e:
-        print(f"❌ DB connection failed: {e}")
         print(f"❌ DB connection failed: {type(e).__name__} → {e}")
+        raise e
 
 
