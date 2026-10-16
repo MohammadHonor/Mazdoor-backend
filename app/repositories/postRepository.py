@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.postSchema import PostCreateResponse,PostCreate
 from app.models.postModel import Post
 from fastapi import HTTPException
-from app.models.user import User 
+from app.models.userModel import User 
 from app.models.postModel import Post
 from sqlmodel import select
 from fastapi import status

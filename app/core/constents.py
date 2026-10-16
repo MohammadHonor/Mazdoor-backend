@@ -1,3 +1,3 @@
 from app.core import settings
-DATABASE_URL = settings.MAZDOOR_DATABASE_URL 
+DATABASE_URL = str(settings.DATABASE_URL) 
 DEBUG = settings.DEBUG
