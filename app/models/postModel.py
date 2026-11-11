@@ -6,3 +6,4 @@ class Post(SQLModel , table = True ) :
     title : str 
     user_id : int | None = Field(default=None , foreign_key = "user.id")
     # user = Relationship("User",back_populates="posts")
+    

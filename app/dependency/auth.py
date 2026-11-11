@@ -37,8 +37,8 @@ async def get_current_active_user(
     return current_user
 
 
-async def authenticate_user(session,username: str, password: str):
-    user = await get_user_info(username=username, session=session)
+async def authenticate_user(session,email: str, password: str):
+    user = await get_user_info(email, session=session)
     if not user:
         return False
     if not verify_password(password, user.password):

@@ -1,23 +1,26 @@
 from enum import Enum
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import Enum as sa_enum
+from sqlalchemy import JSON
 from app.db.database import Base
 from datetime import datetime
+from typing import List
 
 # from app.models.postModel import Post
 
 
 class UserRole(str,Enum):
-    Employer = "employer"
-    Employee = "employee"
-    Admin = "admin"
+    EMPLOYER = "EMPLOYER"
+    EMPLOYEE = "EMPLOYEE"
+    ADMIN = "ADMIN"
 
 class Profession(str,Enum):
-    ARCHITECTURE = "architecture"
-    LABOUR= "labour"
-    CARPENTER = "carpenter"
-    ELECTRICIAN = "electrician"
-    PLUBMER = "plumber"
+    ARCHITECTURE = "ARCHITECTURE"
+    LABOUR= "LABOUR"
+    CARPENTER = "CARPENTER"
+    ELECTRICIAN = "ELECTRICIAN"
+    PLUBMER = "PLUBMER"
+    # PAINTER = "PAINTER"
 
 class User(Base):
     __tablename__ = "user"
@@ -32,9 +35,10 @@ class User(Base):
         index=True
         )
 
-    role: Mapped[UserRole] = mapped_column(sa_enum(UserRole),default=UserRole.Employee)
+    role: Mapped[UserRole] = mapped_column(sa_enum(UserRole),default=UserRole.EMPLOYEE)
 
     profession: Mapped[Profession] = mapped_column(sa_enum(Profession),default= Profession.LABOUR)
+    sub_profession: Mapped[List[str]] = mapped_column(JSON,default=[])
 
     rating: Mapped[float] = mapped_column(default=0.0,insert_default = 0.0)
     salary : Mapped[float] = mapped_column(default=0.0,insert_default = 0.0)
@@ -42,5 +46,5 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(default=False)
     is_verified: Mapped[bool] = mapped_column(default=False)
 
-    create_at: Mapped[datetime] = mapped_column(default= datetime.now)
+    created_at: Mapped[datetime] = mapped_column(default= datetime.now)
     updated_at: Mapped[datetime] = mapped_column(default= datetime.now,onupdate=datetime.now)
