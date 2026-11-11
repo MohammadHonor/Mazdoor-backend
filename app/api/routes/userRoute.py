@@ -1,11 +1,9 @@
-from fastapi import APIRouter,Depends,HTTPException,status
+from fastapi import APIRouter,Depends,HTTPException,status,Query, Header,Cookie, Response,Request
+from fastapi.responses import JSONResponse
 from app.utils.user_data import users
 from typing import List,Annotated
 from app.core import USER_BASE
 from typing import Optional
-from fastapi import Query
-from fastapi import Header,Cookie
-from fastapi import Response,Request
 from app.repositories.userRepo import UserRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_session
@@ -60,8 +58,9 @@ async def read(session_id:str=Cookie(default=None),request:Request=None):
     return session_id
 
 @router.post("/register")
-async def register(user_data:UserSchema, session : Annotated[AsyncSession, Depends(get_session)], background_tasks:BackgroundTasks) :
+async def register(user_data:UserSchema, session : Annotated[AsyncSession, Depends(get_session)]) :
     # background_tasks.add_task(send_welcome_email,user_data.email)
+    print("register route called")
     return await add_user(user_data,session)
 
 @router.patch("/update")
@@ -73,29 +72,32 @@ async def remove_user(id:int)->dict:
     return {id:"this id is deleted now"}
 
 @router.post("/login")
-async def login_user(login:LoginRequest, session:Annotated[AsyncSession,Depends(get_session)],response:Response = None ):
-    user = await authenticate_user(session=session, username=login.username, password=login.password)
-
+async def login_user(login:LoginRequest, session:Annotated[AsyncSession,Depends(get_session)] ,response:Response = None):
+    # print("login route called")
+    user = await authenticate_user(session=session, email=login.email, password=login.password)
+    # print("user",user)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
-    )
+    )    
     response.set_cookie(
         key="access_token",
         value=access_token,
-        httponly=False,   
-        secure=False,     
-        samesite="Strict" 
+        httponly=True,   
+        secure=True,     
+        samesite="strict",
+        max_age=int(access_token_expires.total_seconds()) 
     )
-    return {"message":"login successfully"}
+    return {"name": user.username, "email": user.email, "access_token": access_token, "token_type": "bearer"}
 
-
+# @router.get("/mazdoors/list")
 
     
 

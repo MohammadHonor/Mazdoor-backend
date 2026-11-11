@@ -1,14 +1,23 @@
 from datetime import datetime
 from pydantic import EmailStr,BaseModel,field_validator,model_validator, computed_field
 from typing import Optional
-
+from app.models.userModel import Profession , UserRole
+from typing import List
 class UserSchema(BaseModel):
-    id :int
     username: str
     gender: str
     phone_number: str
-    email: EmailStr
     password: str
+    email: str
+    role: Optional[UserRole] = UserRole.EMPLOYEE
+    
+    # These must be explicitly defined here so FastAPI accepts them from JSON:
+    profession: Optional[Profession] = Profession.LABOUR
+    sub_profession: Optional[List[str]] = []
+    rating: Optional[float] = 0.0
+    salary: Optional[float] = 0.0
+    is_active: Optional[bool] = False
+    is_verified: Optional[bool] = False
 
     # @field_validator('username')
     # def validate_username(cls,value:str)->str:
@@ -47,7 +56,7 @@ class UserSchema(BaseModel):
 #     hashed_password = str
 
 class LoginRequest(BaseModel):
-    username: str
+    email: str
     password: str
 
 # class Username(BaseModel)

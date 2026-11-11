@@ -77,6 +77,31 @@
 # else:
 #     run_migrations_online()
 
-from sqlmodel import SQLModel
-from app.models import *
-target_metadata = SQLModel.metadata
+# from sqlmodel import SQLModel
+# from app.models import *
+# target_metadata = SQLModel.metadata
+
+# # env.py
+
+# from app.db.database import Base
+
+# target_metadata = Base.metadata
+
+from logging.config import logging
+from sqlalchemy import engine_from_config, pool
+from alembic import context
+
+# 1. Import your app's Base and your settings/database URL
+from app.db.database import Base
+from app.core.config import settings  # Adjust this import to match how you load your settings/database URL
+
+# this is the Alembic Config object, which provides
+# access to the values within the .ini file in use.
+config = context.config
+
+# 2. Programmatically override the alembic.ini sqlalchemy.url with your app's actual DATABASE_URL
+config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL)) # Or replace with your direct string/env variable import
+
+target_metadata = Base.metadata
+
+# ... (keep the rest of run_migrations_offline and run_migrations_online functions as they are)

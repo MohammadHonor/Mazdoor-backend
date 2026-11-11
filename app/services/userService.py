@@ -9,19 +9,25 @@ from app.utils.jwt_helpers import hashed_password
 
 
 async def add_user(data:UserSchema,session: AsyncSession)->dict:
-    print(data)
+    # print(" add user service called")
+    
+    repo = UserRepository(session)
+    
     try:
+        # check already existing user
+        user = await repo.get_by_email(email=data.email)
+        if user : 
+            raise UserException(400,message="User already exists")
         data.password = hashed_password(data.password)
-        repo = UserRepository(session)
         await repo.create(data)
         return {"message":f"{data.username} created successfully", "status" : status.HTTP_201_CREATED}
     except Exception as e :
         raise UserException(400,message=str(e))
 
-async def get_user_info(username:str, session:AsyncSession):
+async def get_user_info(email:str, session:AsyncSession):
     try:
         repo = UserRepository(session)
-        result = await repo.get_by_name(username=username)
+        result = await repo.get_by_email(email=email)
         return result
     except Exception as e :
         raise HTTPException(status_code=401,detail=str(e))
